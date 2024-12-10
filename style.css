@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.movies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.movie {
+    border: 1px solid #ddd;
+    padding: 10px;
+    width: 300px;
+    background: #f9f9f9;
+}
+
+.movie h2 {
+    font-size: 1.5rem;
+}
+
+.movie a {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #333;
+    background-color: #f4f4f4;
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.movie-details {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.reviews {
+    padding: 20px;
+    background-color: #fff;
+    border-top: 2px solid #ddd;
+}
