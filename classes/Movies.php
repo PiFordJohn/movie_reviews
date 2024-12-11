@@ -65,4 +65,42 @@ class Movie {
         $stmt = $this->conn->prepare("UPDATE movies SET avg_rating = ? WHERE movie_id = ?");
         $stmt->execute([$this->avg_rating, $this->movie_id]);
     }
+
+    // Fetch recommended movies based on the current movie's genre
+    public function getRecommendedMovies() {
+        // Get the genre of the current movie
+        $stmt = $this->conn->prepare("SELECT genre_id FROM movies WHERE movie_id = ?");
+        $stmt->execute([$this->movie_id]);
+        $genre_id = $stmt->fetch(PDO::FETCH_ASSOC)['genre_id'];
+
+        // Fetch movies from the same genre, excluding the current movie
+        $stmt = $this->conn->prepare("
+            SELECT m.movie_id, m.title, g.genre_name
+            FROM movies m
+            JOIN genres g ON m.genre_id = g.genre_id
+            WHERE g.genre_id = ? AND m.movie_id != ?
+            LIMIT 5
+        ");
+        $stmt->execute([$genre_id, $this->movie_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Fetch trending movies based on the number of reviews
+    public function getTrendingMovies() {
+        $stmt = $this->conn->prepare("
+            SELECT m.movie_id, m.title, COUNT(r.review_id) AS review_count
+            FROM movies m
+            LEFT JOIN reviews r ON m.movie_id = r.movie_id
+            GROUP BY m.movie_id
+            ORDER BY review_count DESC
+            LIMIT 5
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Get the average rating for the movie
+    public function getAverageRating() {
+        return $this->avg_rating;
+    }
 }

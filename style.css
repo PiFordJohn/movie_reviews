@@ -1,49 +1,69 @@
-/* Ensure the whole body takes the full height and center everything */
+
 body {
     display: flex;
-    justify-content: flex-start;  /* Align items to the start (top of the page) */
-    align-items: flex-start;  /* Align content at the top */
+    justify-content: flex-start;  
+    align-items: flex-start;  
     min-height: 100vh;
     margin: 0;
-    background-image: url('img/cinema.jpg'); /* Set your background image */
+    background-image: url('img/cinema.jpg'); 
     background-size: cover;
     color: white;
     font-family: Arial, sans-serif;
-    padding: 20px;  /* Add padding to avoid content sticking to the edge */
-    flex-direction: column;  /* Make the page layout vertical */
+    padding: 20px;  
+    flex-direction: column;  
 }
 
-/* Center the movie section and its contents */
+/* Header Styling */
+header {
+    background-color: rgba(0, 0, 0, 0.7); 
+    padding: 15px;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px; 
+}
+
+header h1 {
+    font-size: 2rem;
+    margin: 0;
+    
+}
+
+header p {
+    font-size: 1rem;
+}
+
+/* movie section and its contents */
 section.movies {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;  /* Center movies horizontally */
+    justify-content: center; 
     padding: 20px;
-    width: 100%; /* Full width */
-    max-width: 1200px; /* Maximum width for the section */
-    margin: 0 auto; /* Center the section horizontally */
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    width: 100%; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    background-color: rgba(0, 0, 0, 0.6); 
     border-radius: 10px;
     color: white;
 }
 
-/* Center the Available Movies title */
+
 section.movies h2 {
-    text-align: center; /* Center the title */
-    font-size: 2rem; /* Adjust the size of the title */
-    margin-bottom: 30px; /* Space below the title */
-    width: 100%; /* Make sure the title spans the full width */
+    text-align: center; 
+    font-size: 2rem;
+    margin-bottom: 30px; 
+    width: 100%; 
 }
 
 /* Movie Section: Movie container */
 .movie {
     margin-bottom: 20px;
     padding: 10px;
-    width: 250px; /* Set width for each movie container */
+    width: 250px; 
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.1); /* Transparent white */
-    text-align: center; /* Center content inside each movie container */
+    background-color: rgba(255, 255, 255, 0.1);
+    text-align: center; 
 }
 
 /* Styling for Movie Titles */

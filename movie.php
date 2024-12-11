@@ -1,6 +1,6 @@
 <?php
 include 'db.php';
-include 'classes/Movie.php';
+include 'classes/Movies.php';
 session_start();
 
 // Redirect to login if the user is not logged in
@@ -15,6 +15,9 @@ if (isset($_GET['movie_id'])) {
     $movie = new Movie($conn, $movie_id);
     $movie_details = $movie->getMovieDetails();
     $reviews = $movie->getReviews();
+    $avg_rating = $movie->getAverageRating(); // Get the average rating
+    $recommended_movies = $movie->getRecommendedMovies(); // Get recommended movies
+    $trending_movies = $movie->getTrendingMovies(); // Get trending movies
 } else {
     echo "Movie not found.";
     exit;
@@ -53,8 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating'], $_POST['rev
     <section class="movie-details">
         <p><?php echo htmlspecialchars($movie_details['description']); ?></p>
         <p>Release Date: <?php echo htmlspecialchars($movie_details['release_date']); ?></p>
-        <p>Average Rating: <?php echo htmlspecialchars($movie_details['avg_rating']); ?></p>
+        <p>Average Rating: <?php echo htmlspecialchars($avg_rating); ?>/5</p>
     </section>
+
     <section class="reviews">
         <h2>Reviews</h2>
         <?php if (!empty($reviews)): ?>
@@ -81,6 +85,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating'], $_POST['rev
             <textarea name="review_text" required></textarea>
             <button type="submit">Submit Review</button>
         </form>
+    </section>
+
+    <section class="recommendations">
+        <h3>Recommended Movies</h3>
+        <?php if (!empty($recommended_movies)): ?>
+            <div class="movies">
+                <?php foreach ($recommended_movies as $recommendation): ?>
+                    <div class="movie">
+                        <h4><?php echo htmlspecialchars($recommendation['title']); ?></h4>
+                        <p>Genre: <?php echo htmlspecialchars($recommendation['genre_name']); ?></p>
+                        <a href="movie.php?movie_id=<?php echo $recommendation['movie_id']; ?>">View Details</a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p>No recommendations available.</p>
+        <?php endif; ?>
+    </section>
+
+    <section class="trending">
+        <h3>Trending Movies</h3>
+        <?php if (!empty($trending_movies)): ?>
+            <div class="movies">
+                <?php foreach ($trending_movies as $trending_movie): ?>
+                    <div class="movie">
+                        <h4><?php echo htmlspecialchars($trending_movie['title']); ?></h4>
+                        <p>Number of Reviews: <?php echo htmlspecialchars($trending_movie['review_count']); ?></p>
+                        <a href="movie.php?movie_id=<?php echo $trending_movie['movie_id']; ?>">View Details</a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p>No trending movies at the moment.</p>
+        <?php endif; ?>
     </section>
 </body>
 </html>
