@@ -1,75 +1,67 @@
 <?php
-// Include necessary files
 include 'db.php';
-include 'Movies.php';
-
-// Start session for user authentication
+include 'classes/Movie.php';
 session_start();
 
-// Check if user is logged in
+// Redirect to login if the user is not logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: user.php");
     exit;
 }
 
-try {
-    // Check if movie_id is provided in the query string
-    if (isset($_GET['movie_id'])) {
-        $movie = new Movie($conn, $_GET['movie_id']);
-        $movie_details = $movie->getMovieDetails();
-        $reviews = $movie->getReviews();
-    } else {
-        $movie_details = null;
-        $reviews = [];
-    }
-} catch (Exception $e) {
-    $movie_details = null;
-    $reviews = [];
-    $error_message = $e->getMessage();
+// Fetch movie details
+if (isset($_GET['movie_id'])) {
+    $movie_id = $_GET['movie_id'];
+    $movie = new Movie($conn, $movie_id);
+    $movie_details = $movie->getMovieDetails();
+    $reviews = $movie->getReviews();
+} else {
+    echo "Movie not found.";
+    exit;
 }
 
 // Handle review submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['rating'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating'], $_POST['review_text'])) {
     $user_id = $_SESSION['user_id'];
+    $rating = $_POST['rating'];
+    $review_text = $_POST['review_text'];
 
-    if ($user_id) {
-        $movie->addReview($user_id, $_POST['rating'], $_POST['review_text']);
-        header("Location: movie.php?movie_id=" . $_GET['movie_id']);
+    try {
+        $movie->addReview($user_id, $rating, $review_text);
+        header("Location: movie.php?movie_id=" . $movie_id);
         exit;
+    } catch (Exception $e) {
+        $error_message = "Failed to add review: " . $e->getMessage();
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($movie_details) ? htmlspecialchars($movie_details['title']) : 'Movie Not Found'; ?> - Details</title>
+    <title><?php echo htmlspecialchars($movie_details['title']); ?> - Reviews</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1><?php echo isset($movie_details) ? htmlspecialchars($movie_details['title']) : 'Movie Not Found'; ?></h1>
-        <nav>
-            <a href="user.php?action=logout">Logout</a>
-        </nav>
+        <h1><?php echo htmlspecialchars($movie_details['title']); ?></h1>
+        <p><a href="index.php">Back to Movies</a></p>
+        <p><a href="user.php?action=logout">Logout</a></p>
     </header>
     <section class="movie-details">
-        <?php if ($movie_details): ?>
-            <p><?php echo htmlspecialchars($movie_details['description']); ?></p>
-            <p>Release Date: <?php echo htmlspecialchars($movie_details['release_date']); ?></p>
-            <p>Average Rating: <?php echo htmlspecialchars($movie_details['avg_rating']); ?></p>
-        <?php else: ?>
-            <p><?php echo isset($error_message) ? htmlspecialchars($error_message) : 'No movie details available.'; ?></p>
-        <?php endif; ?>
+        <p><?php echo htmlspecialchars($movie_details['description']); ?></p>
+        <p>Release Date: <?php echo htmlspecialchars($movie_details['release_date']); ?></p>
+        <p>Average Rating: <?php echo htmlspecialchars($movie_details['avg_rating']); ?></p>
     </section>
     <section class="reviews">
-        <h3>Reviews:</h3>
-        <?php if ($reviews): ?>
+        <h2>Reviews</h2>
+        <?php if (!empty($reviews)): ?>
             <?php foreach ($reviews as $review): ?>
                 <div class="review">
-                    <strong><?php echo htmlspecialchars($review['username']); ?></strong> 
-                    rated: <?php echo htmlspecialchars($review['rating']); ?>/5
+                    <strong><?php echo htmlspecialchars($review['username']); ?></strong>
+                    rated <?php echo htmlspecialchars($review['rating']); ?>/5
                     <p><?php echo htmlspecialchars($review['review_text']); ?></p>
                     <small>Posted on: <?php echo htmlspecialchars($review['created_at']); ?></small>
                 </div>
@@ -78,7 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['rating'])) {
             <p>No reviews yet. Be the first to review!</p>
         <?php endif; ?>
 
-        <!-- Review Form -->
+        <h3>Add Your Review</h3>
+        <?php if (isset($error_message)): ?>
+            <p style="color: red;"><?php echo htmlspecialchars($error_message); ?></p>
+        <?php endif; ?>
         <form method="POST">
             <label for="rating">Rating (1-5):</label>
             <input type="number" name="rating" min="1" max="5" required>

@@ -1,51 +1,66 @@
+/* Ensure the whole body takes the full height and center everything */
 body {
-    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: flex-start;  /* Align items to the start (top of the page) */
+    align-items: flex-start;  /* Align content at the top */
+    min-height: 100vh;
     margin: 0;
-    padding: 0;
-}
-
-header {
-    background: #333;
+    background-image: url('your-image-path.jpg'); /* Set your background image */
+    background-size: cover;
     color: white;
-    text-align: center;
-    padding: 20px;
+    font-family: Arial, sans-serif;
+    padding: 20px;  /* Add padding to avoid content sticking to the edge */
+    flex-direction: column;  /* Make the page layout vertical */
 }
 
-.movies {
+/* Center the movie section and its contents */
+section.movies {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    justify-content: center;  /* Center movies horizontally */
     padding: 20px;
+    width: 100%; /* Full width */
+    max-width: 1200px; /* Maximum width for the section */
+    margin: 0 auto; /* Center the section horizontally */
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    border-radius: 10px;
+    color: white;
 }
 
+/* Center the Available Movies title */
+section.movies h2 {
+    text-align: center; /* Center the title */
+    font-size: 2rem; /* Adjust the size of the title */
+    margin-bottom: 30px; /* Space below the title */
+    width: 100%; /* Make sure the title spans the full width */
+}
+
+/* Movie Section: Movie container */
 .movie {
-    border: 1px solid #ddd;
+    margin-bottom: 20px;
     padding: 10px;
-    width: 300px;
-    background: #f9f9f9;
+    width: 250px; /* Set width for each movie container */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1); /* Transparent white */
+    text-align: center; /* Center content inside each movie container */
 }
 
-.movie h2 {
+/* Styling for Movie Titles */
+.movie h3 {
+    margin: 0 0 10px;
     font-size: 1.5rem;
 }
 
+.movie p {
+    margin: 5px 0;
+}
+
 .movie a {
-    display: inline-block;
-    margin-top: 10px;
+    color: #00f;
     text-decoration: none;
-    color: #333;
-    background-color: #f4f4f4;
-    padding: 5px 10px;
-    border-radius: 3px;
 }
 
-.movie-details {
-    padding: 20px;
-    background-color: #f9f9f9;
-}
-
-.reviews {
-    padding: 20px;
-    background-color: #fff;
-    border-top: 2px solid #ddd;
+.movie a:hover {
+    text-decoration: underline;
 }

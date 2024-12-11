@@ -1,27 +1,28 @@
 <?php
-// Include database connection
 include 'db.php';
-
-// Start session
 session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: user.php"); // Redirect to login page
+    header("Location: user.php");
     exit;
 }
 
+// Initialize movies as an empty array to avoid errors when using count()
+$movies = [];
+
 try {
-    // Fetch movies along with genres using a join query
-    $stmt = $conn->query("
-        SELECT m.movie_id, m.title, m.description, m.release_date, m.avg_rating, g.genre_name 
+    // Fetch movies and their genres
+    $stmt = $conn->prepare("
+        SELECT m.movie_id, m.title, m.description, m.release_date, m.avg_rating, g.genre_name
         FROM movies m
         LEFT JOIN genres g ON m.genre_id = g.genre_id
     ");
+    $stmt->execute();
     $movies = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    $movies = [];
-    $error_message = $e->getMessage();
+    // If there was an error with the query, log it or display a message
+    $error_message = "Error fetching movies: " . $e->getMessage();
 }
 ?>
 
@@ -36,27 +37,24 @@ try {
 <body>
     <header>
         <h1>Welcome to the Movie Review Platform</h1>
-        <nav>
-            <a href="user.php?action=logout">Logout</a>
-        </nav>
+        <p>Hello, <?php echo htmlspecialchars($_SESSION['username']); ?>! <a href="user.php?action=logout">Logout</a></p>
     </header>
+    <h2>Available Movies</h2>
     <section class="movies">
+        
         <?php if (!empty($movies)): ?>
             <?php foreach ($movies as $movie): ?>
                 <div class="movie">
-                    <h2><?php echo htmlspecialchars($movie['title']); ?></h2>
+                    <h3><?php echo htmlspecialchars($movie['title']); ?></h3>
                     <p><?php echo htmlspecialchars($movie['description']); ?></p>
                     <p>Release Date: <?php echo htmlspecialchars($movie['release_date']); ?></p>
-                    <p>Genre: <?php echo htmlspecialchars($movie['genre_name']); ?></p>
-                    <p>Average Rating: <?php echo htmlspecialchars($movie['avg_rating']); ?></p>
+                    <p>Genre: <?php echo htmlspecialchars($movie['genre_name'] ?? 'Unknown'); ?></p>
+                    <p>Average Rating: <?php echo htmlspecialchars($movie['avg_rating'] ?? 'No ratings yet'); ?></p>
                     <a href="movie.php?movie_id=<?php echo $movie['movie_id']; ?>">View Details</a>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
             <p>No movies available at the moment.</p>
-            <?php if (isset($error_message)): ?>
-                <p>Error: <?php echo htmlspecialchars($error_message); ?></p>
-            <?php endif; ?>
         <?php endif; ?>
     </section>
 </body>
