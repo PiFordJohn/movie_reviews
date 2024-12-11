@@ -5,7 +5,7 @@ body {
     align-items: flex-start;  /* Align content at the top */
     min-height: 100vh;
     margin: 0;
-    background-image: url('your-image-path.jpg'); /* Set your background image */
+    background-image: url('img/cinema.jpg'); /* Set your background image */
     background-size: cover;
     color: white;
     font-family: Arial, sans-serif;

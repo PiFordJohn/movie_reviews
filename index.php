@@ -37,11 +37,15 @@ try {
 <body>
     <header>
         <h1>Welcome to the Movie Review Platform</h1>
-        <p>Hello, <?php echo htmlspecialchars($_SESSION['username']); ?>! <a href="user.php?action=logout">Logout</a></p>
+        <?php if (isset($_SESSION['username'])): ?>
+            <p>Hello, <?php echo htmlspecialchars($_SESSION['username']); ?>! <a href="user.php?action=logout">Logout</a></p>
+        <?php else: ?>
+            <p>Hello, Guest! <a href="user.php">Login</a></p>
+        <?php endif; ?>
     </header>
-    <h2>Available Movies</h2>
+
     <section class="movies">
-        
+        <h2>Available Movies</h2>
         <?php if (!empty($movies)): ?>
             <?php foreach ($movies as $movie): ?>
                 <div class="movie">
